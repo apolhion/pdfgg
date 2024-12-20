@@ -2,10 +2,10 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const { default: nodeHtmlToImage } = require('node-html-to-image');
+const puppeteer = require('puppeteer-core');
 
 const app = express();
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
 
 function generateRandomHex(size) {
   return crypto.randomBytes(size).toString('hex').toUpperCase();
@@ -57,23 +57,11 @@ function generateHtmlContent(quem_recebe_nome, quem_recebe_cpf, quem_recebe_inst
             margin-top: 10px;
         }
     </style>
-  
-
 </head>
   <body style="padding: 2rem">
     <h1>bradesco</h1>
-    <h2 style="
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 0;
-">Comprovante Pix</h2>
-    <p style="
-    margin-top: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-">Transferência agendada para chave Pix</p>
+    <h2 style="display: flex; justify-content: center; margin-bottom: 0;">Comprovante Pix</h2>
+    <p style="display: flex; justify-content: center;">Transferência agendada para chave Pix</p>
 
     <div class="section">
         <div><strong>Data e hora:</strong> ${data_hora}</div>
@@ -109,7 +97,7 @@ function generateHtmlContent(quem_recebe_nome, quem_recebe_cpf, quem_recebe_inst
         <div class="section-title">AUTENTICAÇÃO</div>
         <div class="auth">${autenticacao}</div>
     </div>
-</body></html>
+  </body></html>
   `;
 }
 
@@ -130,19 +118,25 @@ app.get('/comprovante', async (req, res) => {
     const jpgFileName = `comprovante_${Date.now()}.jpg`;
     const jpgPath = path.join(outputDir, jpgFileName);
 
-    await nodeHtmlToImage({
-      output: jpgPath,
-      html: htmlContent,
+    // Usando Puppeteer diretamente para gerar a imagem (JPEG)
+    const browser = await puppeteer.launch({
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(htmlContent);
+    await page.setViewport({ width: 600, height: 900 });
+
+    // Gerando imagem JPEG
+    await page.screenshot({
+      path: jpgPath,
       type: 'jpeg',
       quality: 100,
-      puppeteerArgs: {
-        defaultViewport: {
-          width: 600,
-          height: 900,
-        },
-      },
     });
-    
+
+    await browser.close();
 
     res.json({
       success: true,
@@ -155,9 +149,11 @@ app.get('/comprovante', async (req, res) => {
 });
 
 app.use('/comprovantes', express.static(path.join(__dirname, 'jpgs')));
-app.get('/', () => {
-  return "ok1";
-})
+
+app.get('/', (req, res) => {
+  return res.send("ok1");
+});
+
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });
