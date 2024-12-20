@@ -156,7 +156,7 @@ app.get('/comprovante', async (req, res) => {
 
 app.use('/comprovantes', express.static(path.join(__dirname, 'jpgs')));
 app.get('/', () => {
-  return "ok";
+  return "ok1";
 })
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
