@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { default: nodeHtmlToImage } = require('node-html-to-image');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000
 
 function generateRandomHex(size) {
   return crypto.randomBytes(size).toString('hex').toUpperCase();
@@ -155,7 +155,9 @@ app.get('/comprovante', async (req, res) => {
 });
 
 app.use('/comprovantes', express.static(path.join(__dirname, 'jpgs')));
-
+app.get('/', () => {
+  return "ok";
+})
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });
