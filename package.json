@@ -14,8 +14,7 @@
     "express": "^4.21.2",
     "html-to-image": "^1.11.11",
     "node-html-to-image": "^5.0.0",
-    "puppeteer": "^18.1.0",
-    "puppeteer-core": "^18.1.0"
+    "puppeteer": "^2.0.0"
   },
   "puppeteer": {
     "skip_chromium_download": true

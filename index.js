@@ -130,7 +130,6 @@ app.get('/comprovante', async (req, res) => {
       ],
       headless: true,
       ignoreHTTPSErrors: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
     });
     
     const page = await browser.newPage();
