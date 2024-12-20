@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const puppeteer = require('puppeteer-core');
+const puppeteer = require('puppeteer');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -119,8 +119,20 @@ app.get('/comprovante', async (req, res) => {
     const jpgPath = path.join(outputDir, jpgFileName);
 
     // Usando Puppeteer diretamente para gerar a imagem (JPEG)
-    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'], headless: true, executablePath: puppeteer.executablePath(), ignoreHTTPSErrors: true });
-
+    const browser = await puppeteer.launch({
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--headless',
+        '--disable-gpu',
+        '--window-size=1280x1024'
+      ],
+      headless: true,
+      ignoreHTTPSErrors: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
+    });
+    
     const page = await browser.newPage();
     await page.setContent(htmlContent);
     await page.setViewport({ width: 600, height: 900 });
