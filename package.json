@@ -16,6 +16,9 @@
     "node-html-to-image": "^5.0.0",
     "puppeteer": "^23.11.1"
   },
+  "puppeteer": {
+  "skip_chromium_download": true
+  },
   "engines": {
     "node": "20"
   }
