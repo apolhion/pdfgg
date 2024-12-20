@@ -1,0 +1,20 @@
+{
+  "name": "pd-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "express": "^4.21.2",
+    "puppeteer": "^23.11.1"
+  },
+  "engines": {
+  "node": "20.xx"
+}
+}
