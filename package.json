@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "heroku-postbuild": "mkdir ./.cache && mv /app/.cache/puppeteer ./.cache"
   },
   "keywords": [],
   "author": "",
@@ -14,8 +15,8 @@
     "express": "^4.21.2",
     "html-to-image": "^1.11.11",
     "node-html-to-image": "^5.0.0",
-    "puppeteer": "^23.11.1",
-    "puppeteer-core": "^23.11.1"
+    "puppeteer": "^18.1.0",
+    "puppeteer-core": "^18.1.0"
   },
   "puppeteer": {
     "skip_chromium_download": true

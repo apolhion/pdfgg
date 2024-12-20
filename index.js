@@ -119,11 +119,7 @@ app.get('/comprovante', async (req, res) => {
     const jpgPath = path.join(outputDir, jpgFileName);
 
     // Usando Puppeteer diretamente para gerar a imagem (JPEG)
-    const browser = await puppeteer.launch({
-      executablePath: '/usr/local/bin/chromium',
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'], headless: true, executablePath: puppeteer.executablePath(), ignoreHTTPSErrors: true });
 
     const page = await browser.newPage();
     await page.setContent(htmlContent);
