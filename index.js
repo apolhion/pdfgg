@@ -1,31 +1,11 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const { default: nodeHtmlToImage } = require('node-html-to-image');
 
 const app = express();
 const port = 3000;
-
-let browser;
-
-async function initializeBrowser() {
-  if (!browser || browser.isClosed()) {
-    try {
-      browser = await puppeteer.launch();
-    } catch (error) {
-      console.error('Erro ao inicializar o navegador:', error);
-    }
-  }
-}
-
-initializeBrowser();
-
-process.on('exit', async () => {
-  if (browser) {
-    await browser.close();
-  }
-});
 
 function generateRandomHex(size) {
   return crypto.randomBytes(size).toString('hex').toUpperCase();
@@ -36,17 +16,13 @@ function generateHtmlContent(quem_recebe_nome, quem_recebe_cpf, quem_recebe_inst
   const numero_controle = generateRandomHex(12);
   const autenticacao = `${generateRandomHex(16)} ${generateRandomHex(8)}=`;
 
-  const dado_conta_nome = "Virginia Fonseca Costa";
-  const dado_conta_cpf = "***.907.070-**";
-  const dado_conta_instituicao = "Banco Bradesco S.A.";
-
   const valor_transferencia = "R$ 1.000,00";
   const tarifa = "R$ 0,00";
   const descricao = "Corrente";
   const debito_de = "Poupança";
 
   return `
-  <html lang="pt-BR"><head>
+    <html lang="pt-BR"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comprovante Pix</title>
@@ -81,8 +57,10 @@ function generateHtmlContent(quem_recebe_nome, quem_recebe_cpf, quem_recebe_inst
             margin-top: 10px;
         }
     </style>
-  </head>
-  <body>
+  
+
+</head>
+  <body style="padding: 2rem">
     <h1>bradesco</h1>
     <h2 style="
     width: 100%;
@@ -104,9 +82,9 @@ function generateHtmlContent(quem_recebe_nome, quem_recebe_cpf, quem_recebe_inst
 
     <div class="section">
         <div class="section-title">DADOS DA CONTA</div>
-        <div><strong>Nome:</strong> ${dado_conta_nome}</div>
-        <div><strong>CPF:</strong> ${dado_conta_cpf}</div>
-        <div><strong>Instituição:</strong> ${dado_conta_instituicao}</div>
+        <div><strong>Nome:</strong> Virginia Fonseca Costa</div>
+        <div><strong>CPF:</strong> ***.907.070-**</div>
+        <div><strong>Instituição:</strong> Banco Bradesco S.A</div>
     </div>
 
     <div class="section">
@@ -144,12 +122,6 @@ app.get('/comprovante', async (req, res) => {
   const htmlContent = generateHtmlContent(quem_recebe_nome, quem_recebe_cpf, quem_recebe_instituicao, quem_recebe_chave);
 
   try {
-    await initializeBrowser();
-    const page = await browser.newPage();
-
-    await page.setContent(htmlContent);
-    await page.setViewport({ width: 600, height: 900 });
-
     const outputDir = path.join(__dirname, 'jpgs');
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
@@ -158,14 +130,24 @@ app.get('/comprovante', async (req, res) => {
     const jpgFileName = `comprovante_${Date.now()}.jpg`;
     const jpgPath = path.join(outputDir, jpgFileName);
 
-    await page.screenshot({ path: jpgPath, type: 'jpeg' });
-    await page.close();
+    await nodeHtmlToImage({
+      output: jpgPath,
+      html: htmlContent,
+      type: 'jpeg',
+      quality: 100,
+      puppeteerArgs: {
+        defaultViewport: {
+          width: 600,
+          height: 900,
+        },
+      },
+    });
+    
 
     res.json({
       success: true,
-      jpg_file: jpgFileName
+      jpg_file: jpgFileName,
     });
-
   } catch (error) {
     console.error('Erro ao gerar a imagem:', error);
     res.json({ success: false, error: error.message });

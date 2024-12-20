@@ -12,9 +12,11 @@
   "dependencies": {
     "canvas": "^2.11.2",
     "express": "^4.21.2",
+    "html-to-image": "^1.11.11",
+    "node-html-to-image": "^5.0.0",
     "puppeteer": "^23.11.1"
   },
   "engines": {
-  "node": "20"
-}
+    "node": "20"
+  }
 }
