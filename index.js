@@ -158,7 +158,7 @@ app.get('/comprovante', async (req, res) => {
 app.use('/comprovantes', express.static(path.join(__dirname, 'jpgs')));
 
 app.get('/', (req, res) => {
-  return res.send("ok1");
+  return res.send("okdoqw");
 });
 
 app.listen(port, () => {
