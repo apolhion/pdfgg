@@ -161,8 +161,8 @@ function generateHtmlContentMaia(quem_recebe_nome, quem_recebe_cpf, quem_recebe_
 
     <div class="section">
         <div class="section-title">DADOS DA CONTA</div>
-        <div><strong>Nome:</strong>Luiz Carlos Ferreira dos Santos</div>
-        <div><strong>CNPJ:</strong>53.256.988/0001-10</div>
+        <div><strong>Nome:</strong> Luiz Carlos Ferreira dos Santos</div>
+        <div><strong>CNPJ:</strong> 53.256.988/0001-10</div>
         <div><strong>Instituição:</strong> Banco Bradesco S.A</div>
     </div>
 
